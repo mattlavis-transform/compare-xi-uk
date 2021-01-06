@@ -3,6 +3,7 @@ import sys
 import os
 from .database import Database
 from .commodity import Commodity
+from dotenv import load_dotenv
 
 
 def m_str(s):
@@ -15,6 +16,8 @@ def m_str(s):
 class Classification:
     def __init__(self, which):
         self.which = which
+        load_dotenv('.env')
+        self.ref_date = os.getenv('REF_DATE')
 
     def run(self):
         cwd = os.getcwd()
@@ -28,7 +31,7 @@ class Classification:
             filename = os.path.join(subfolder, item + ".csv")
             f = open(filename, "w+")
             sql = """select goods_nomenclature_sid, goods_nomenclature_item_id, producline_suffix, description
-            from utils.goods_nomenclature_export_new('""" + str(item) + """%', '2021-01-04')
+            from utils.goods_nomenclature_export_new('""" + str(item) + """%', '""" + self.ref_date + """')
             order by 2, 3;"""
             d = Database(self.which)
             d.open_connection()
